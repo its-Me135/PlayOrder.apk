@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:device_preview/device_preview.dart';
+import 'package:file_picker/file_picker.dart';
 
 void main() {
   // WidgertsFlutterBinding.ensureInitialized();
@@ -15,7 +16,7 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  @override
+  TextEditingController directoryController = TextEditingController();
   Widget build(BuildContext context) {
     return MaterialApp(
       useInheritedMediaQuery: true,
@@ -26,6 +27,7 @@ class _HomeState extends State<Home> {
         scaffoldBackgroundColor: const Color.fromARGB(255, 20, 1, 44),
       ),
       home: Scaffold(
+        resizeToAvoidBottomInset: false,
         appBar: AppBar(
           leading: Icon(Icons.playlist_play),
           title: Text(
@@ -75,9 +77,9 @@ class _HomeState extends State<Home> {
                                 ).createShader(bounds);
                               },
                               child: Text(
-                                'Your Gradient Text',
+                                'Automated files sequencing for Youtube local downloaded playlists',
                                 style: TextStyle(
-                                  fontSize: 40,
+                                  fontSize: 20,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
@@ -93,70 +95,125 @@ class _HomeState extends State<Home> {
             Center(
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: Card(
-                  shape: RoundedRectangleBorder(
+                child: Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      color: const Color.fromARGB(255, 11, 182, 212),
+                      width: 3.0,
+                    ),
                     borderRadius: BorderRadius.circular(15.0),
                   ),
-                  color: Colors.grey[400],
-                  child: Container(
-                    padding: const EdgeInsets.all(16.0),
-                    height: 300,
-                    child: Column(
-                      children: [
-                        Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            'TARGET PLAYLIST URL :',
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                        SizedBox(height: 10),
+                  child: Card(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15.0),
+                    ),
 
-                        TextField(
-                          decoration: InputDecoration(
-                            border: OutlineInputBorder(),
-                            labelText: 'Enter PlayList URL',
-                          ),
-                        ),
-                        SizedBox(height: 20),
-                        Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            'LOCAL DIRECTORY PATH :',
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
+                    color: Color.fromARGB(255, 20, 1, 44),
+                    child: Container(
+                      padding: const EdgeInsets.all(16.0),
+                      height: 300,
+                      child: Column(
+                        children: [
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              'TARGET PLAYLIST URL :',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: Color.fromARGB(255, 11, 182, 212),
+                              ),
                             ),
                           ),
-                        ),
-                        SizedBox(height: 10),
-                        TextField(
-                          decoration: InputDecoration(
-                            border: OutlineInputBorder(),
-                            labelText: 'Downloads/videos/playlist',
-                          ),
-                        ),
+                          SizedBox(height: 10),
 
-                        SizedBox(height: 20),
-                        Row(
-                          children: [
-                            Text(
-                              'DRY RUN (PREVIEW ONLY)',
-                              style: TextStyle(fontSize: 18),
+                          TextField(
+                            style: TextStyle(color: Colors.white),
+                            decoration: InputDecoration(
+                              border: OutlineInputBorder(),
+
+                              labelText: 'Enter PlayList URL',
+                              labelStyle: TextStyle(color: Colors.white70),
                             ),
-                            SizedBox(width: 10),
-                            Switch(
-                              value: false,
-                              onChanged: (bool value) {
-                                // Handle switch state change
-                              },
+                          ),
+                          SizedBox(height: 20),
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              'LOCAL DIRECTORY PATH :',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: Color.fromARGB(255, 11, 182, 212),
+                              ),
                             ),
-                          ],
-                        ),
-                      ],
+                          ),
+                          SizedBox(height: 10),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: TextField(
+                                  controller: directoryController,
+                                  readOnly: true,
+                                  style: TextStyle(color: Colors.white),
+                                  decoration: InputDecoration(
+                                    border: OutlineInputBorder(),
+                                    labelText: 'Select Directory',
+                                    labelStyle: TextStyle(
+                                      color: Colors.white70,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              SizedBox(width: 10),
+                              ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Color.fromARGB(
+                                    255,
+                                    17,
+                                    167,
+                                    167,
+                                  ),
+                                ),
+                                onPressed: () async {
+                                  String? selectedDirectory = await FilePicker
+                                      .platform
+                                      .getDirectoryPath();
+                                  if (selectedDirectory != null) {
+                                    setState(() {
+                                      directoryController.text =
+                                          selectedDirectory;
+                                    });
+                                  }
+                                },
+                                child: Text(
+                                  'Browse',
+                                  style: TextStyle(color: Colors.black),
+                                ),
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: 20),
+                          Row(
+                            children: [
+                              Text(
+                                'DRY RUN (PREVIEW ONLY)',
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  color: Colors.white70,
+                                ),
+                              ),
+                              SizedBox(width: 10),
+                              Switch(
+                                value: false,
+                                onChanged: (bool value) {
+                                  // Handle switch state change
+                                },
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
@@ -169,7 +226,7 @@ class _HomeState extends State<Home> {
                 width: double.infinity,
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blueGrey,
+                    backgroundColor: Color.fromARGB(255, 17, 167, 167),
                   ),
 
                   onPressed: () {
@@ -180,7 +237,7 @@ class _HomeState extends State<Home> {
                     style: TextStyle(
                       fontSize: 23,
                       fontWeight: FontWeight.bold,
-                      color: Colors.white,
+                      color: Colors.black,
                     ),
                   ),
                 ),
